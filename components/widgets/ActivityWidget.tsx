@@ -4,23 +4,23 @@ import { useEffect, useState } from "react";
 import LoadingSkeleton, { CardSkeleton } from "@/components/LoadingSkeleton";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function ClubsWidget() {
-  const [clubs, setClubs] = useState<any[]>([]);
+export default function ActivityWidget() {
+  const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const { data, error: supaError } = await supabase
-        .from("clubs")
+        .from("activities")
         .select("*")
-        .order("member_count", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(5);
 
       if (supaError) {
-        console.error("ClubsWidget Supabase Error:", supaError.message);
+        console.error("ActivityWidget Supabase Error:", supaError.message);
       }
 
-      setClubs(data || []);
+      setActivities(data || []);
       setLoading(false);
     }
 
@@ -31,11 +31,11 @@ export default function ClubsWidget() {
 
   return (
     <div className="p-4 border rounded-xl bg-white shadow">
-      <h3 className="font-semibold mb-2">Popular Clubs</h3>
+      <h3 className="font-semibold mb-2">Recent Activity</h3>
 
-      {clubs.map((club) => (
-        <div key={club.id} className="border-b py-2 text-sm">
-          <strong>{club.name}</strong> — {club.member_count} members
+      {activities.map((a) => (
+        <div key={a.id} className="border-b py-2 text-sm">
+          {a.description}
         </div>
       ))}
     </div>

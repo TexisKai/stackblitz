@@ -67,7 +67,7 @@ export async function deleteIDDocument(filePath: string) {
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 
 export function useAuth() {
@@ -106,7 +106,7 @@ export function useAuth() {
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import type { OnboardingData } from '@/types';
 
 export function useOnboarding() {
