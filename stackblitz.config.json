@@ -1,0 +1,14 @@
+{
+  "installDependencies": true,
+  "startCommand": "npm run dev",
+  "openFiles": [
+    "README.md",
+    "app/(auth)/login/page.tsx",
+    "lib/supabaseClient.ts"
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "",
+    "DU_EMAIL_DOMAIN": "du.ac.in"
+  }
+}
