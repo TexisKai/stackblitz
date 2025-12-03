@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import LoadingSkeleton, { CardSkeleton } from "@/components/LoadingSkeleton";
-import { supabase } from "@/lib/supabaseClient";
-
+import { createClient } from "@/lib/supabaseBrowser";
 export default function ActivityWidget() {
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
-      const { data, error: supaError } = await supabase
+      const supabase = createClient();
+    const { data, error: supaError } = await supabasesupabase
         .from("activities")
         .select("*")
         .order("created_at", { ascending: false })
