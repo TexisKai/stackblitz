@@ -1,22 +1,14 @@
+import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
+export async function GET(req: Request) {
+  const url = new URL(req.url);
   const code = url.searchParams.get("code");
 
-  if (!code) {
-    return NextResponse.redirect("/auth/error?reason=no_code");
+  if (code) {
+    const supabase = createClient();
+    await supabase.auth.exchangeCodeForSession(code);
   }
 
-  // Verify magic link
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-  if (error) {
-    console.error("Magic link callback error:", error);
-    return NextResponse.redirect("/auth/error?reason=auth_failed");
-  }
-
-  // Redirect to onboarding if first time
-  return NextResponse.redirect("/onboarding");
+  return NextResponse.redirect(new URL("/", url.origin));
 }

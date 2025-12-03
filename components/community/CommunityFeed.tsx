@@ -1,13 +1,12 @@
-// components/widgets/TrendingPostsWidget.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import PostCard from "@/components/common/PostCard";
 
-export default function TrendingPostsWidget() {
+export default function CommunityFeed({ communityId }: { communityId: string }) {
   const supabase = createClient();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function loadPosts() {
@@ -15,7 +14,7 @@ export default function TrendingPostsWidget() {
 
     const { data, error } = await supabase
       .from("posts")
-      .select(`
+      .select(\`
         id,
         content,
         image_url,
@@ -23,7 +22,9 @@ export default function TrendingPostsWidget() {
         author:profiles(id, display_name, avatar_url),
         likes:post_likes(count),
         comments:post_comments(count)
-      `);
+      \`)
+      .eq("community_id", communityId)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error(error);
@@ -31,7 +32,7 @@ export default function TrendingPostsWidget() {
       return;
     }
 
-    const formatted = data.map((p) => ({
+    const formatted = (data || []).map((p) => ({
       ...p,
       likes_count: p.likes?.[0]?.count || 0,
       comments_count: p.comments?.[0]?.count || 0,
@@ -43,13 +44,16 @@ export default function TrendingPostsWidget() {
 
   useEffect(() => {
     loadPosts();
-  }, []);
+  }, [communityId]);
+
+  if (loading) return <div>Loading posts...</div>;
 
   return (
-    <div className="p-4 bg-white dark:bg-neutral-900 rounded-xl">
-      <h2 className="font-semibold mb-3">Trending Posts</h2>
-      {loading && <div>Loading...</div>}
-      {!loading && posts.map((post) => <PostCard key={post.id} post={post} />)}
+    <div className="space-y-4">
+      {posts.length === 0 && <div>No posts yet</div>}
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
     </div>
   );
 }
