@@ -19,8 +19,7 @@ export default function OnboardingPage() {
   const searchParams = useSearchParams();
 
   const { user, loading: authLoading } = useAuth();
-  const { completeOnboarding, loading: saving } = useOnboarding();
-
+  const [saving, setSaving] = useState(false);
   // STEP from URL
   const stepFromUrl = Number(searchParams.get("step")) || 1;
 
@@ -80,6 +79,26 @@ export default function OnboardingPage() {
     }
   };
 
+  const completeOnboarding = async (userId: string) => {
+    try {
+      setSaving(true);
+      const response = await fetch('/api/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, ...formData }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to complete onboarding');
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Onboarding error:', error);
+      throw error;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const next = () => {
     if (!validateStep()) {
       setError("Please complete this step before continuing.");
@@ -116,7 +135,7 @@ export default function OnboardingPage() {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <Step1 data={formData} updateData={setFormData} />;
+        return <Step1 />;
       case 2:
         return (
           <Step2
