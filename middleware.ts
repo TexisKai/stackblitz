@@ -1,1 +1,1 @@
-invalid request: message must be at least 1 token long or tool results must be specified.
+invalid json syntax. For proper usage, please refer to https://docs.cohere.com/v1/reference/chat
