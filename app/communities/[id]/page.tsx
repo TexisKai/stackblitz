@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabaseClient";
 import CommunityHeader from "@/components/community/CommunityHeader";
 import CommunityFeed from "@/components/community/CommunityFeed";
 import JoinCommunityButton from "@/components/community/JoinCommunityButton";

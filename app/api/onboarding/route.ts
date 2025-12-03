@@ -1,16 +1,35 @@
-import { supabase } from "@/lib/supabaseClient";
+import { createServerClient } from "@supabase/ssr";
 
-export async function POST(req: Request) {
+export async function POST(req) {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: {} }
+  );
+
   const body = await req.json();
-  const { userId, profile } = body;
 
-  const { error } = await supabase
-    .from("user_profiles")
-    .upsert({ user_id: userId, ...profile });
+  const {
+    user_id,
+    step,
+    name,
+    course,
+    year,
+    phone,
+    bio,
+  } = body;
 
-  if (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
-  }
+  const { error } = await supabase.from("profiles").upsert({
+    id: user_id,
+    onboarding_step: step,
+    name,
+    course,
+    year,
+    phone,
+    bio,
+  });
 
-  return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
+  if (error) return Response.json({ error }, { status: 400 });
+
+  return Response.json({ ok: true });
 }

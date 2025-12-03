@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabaseClient";
 import TeamInvitePanel from "@/components/teams/TeamInvitePanel";
 
 export default async function Page({ params }: { params: { id: string } }) {

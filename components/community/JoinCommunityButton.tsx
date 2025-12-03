@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/lib/supabaseClient";
 
 export default function JoinCommunityButton({ communityId }: { communityId: string }) {
   const supabase = createClient();

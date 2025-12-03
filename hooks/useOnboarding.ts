@@ -1,21 +1,13 @@
-import { useState } from "react";
+"use client";
 
-export function useOnboarding() {
-  const [loading, setLoading] = useState(false);
+import { useRouter } from "next/navigation";
 
-  async function completeOnboarding(userId: string, formData: any) {
-    setLoading(true);
+export function useOnboarding(step: number) {
+  const router = useRouter();
 
-    const res = await fetch("/api/onboarding", {
-      method: "POST",
-      body: JSON.stringify({ userId, profile: formData }),
-      headers: { "Content-Type": "application/json" }
-    });
-
-    setLoading(false);
-
-    if (!res.ok) throw new Error("Onboarding failed.");
-  }
-
-  return { completeOnboarding, loading };
+  return {
+    next: () => router.push(`/onboarding/step-${step + 1}`),
+    prev: () => router.push(`/onboarding/step-${step - 1}`),
+    finish: () => router.push("/auth/verify"),
+  };
 }

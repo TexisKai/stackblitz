@@ -1,24 +1,36 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabaseClient";
 
-export function middleware(req) {
-  const url = req.nextUrl.clone();
-  const pathname = url.pathname;
+export async function middleware(req) {
+  const res = NextResponse.next();
 
-  // protect /admin routes (basic guard based on Supabase auth cookies)
-  if (pathname.startsWith("/admin")) {
-    const hasAccessToken = !!req.cookies.get("sb-access-token")?.value;
-    const hasRefreshToken = !!req.cookies.get("sb-refresh-token")?.value;
+  const supabase = createClient(req, res);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-    if (!hasAccessToken && !hasRefreshToken) {
-      // redirect to home (or sign-in)
-      url.pathname = "/";
-      return NextResponse.redirect(url);
-    }
+  const pathname = req.nextUrl.pathname;
+
+  const publicRoutes = [
+    "/auth",
+    "/auth/verify",
+    "/auth/error",
+    "/auth/callback",
+    "/check-email",
+    "/"
+  ];
+
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
+    return res;
   }
 
-  return NextResponse.next();
+  if (!session) {
+    return NextResponse.redirect(new URL("/auth", req.url));
+  }
+
+  return res;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"]
+  matcher: ["/((?!_next|static|api|public).*)"],
 };

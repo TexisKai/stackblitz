@@ -1,8 +1,8 @@
-import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabaseClient";
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
+export async function GET(request: Request) {
+  const url = new URL(request.url);
   const code = url.searchParams.get("code");
 
   if (code) {

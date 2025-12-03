@@ -2,20 +2,22 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/utils/supabase/client";
+import { createBrowserSupabaseClient } from "@/lib/supabaseBrowser";
 
 export default function ChatList() {
-  const supabase = createClient();
+  const supabase = createBrowserSupabaseClient();
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function loadChats() {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.session) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData?.session) return;
 
-    const userId = session.session.user.id;
+    const userId = sessionData.session.user.id;
 
-    const { data, error } = await supabase.rpc("get_chat_list", { uid: userId });
+    const { data, error } = await supabase.rpc("get_chat_list", {
+      uid: userId,
+    });
 
     if (!error) setChats(data || []);
     setLoading(false);

@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabaseClient";
 import TeamCard from "@/components/teams/TeamCard";
 import TeamCreateForm from "@/components/teams/TeamCreateForm";
 

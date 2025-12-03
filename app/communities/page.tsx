@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabaseClient";
 import Link from "next/link";
 
 export default async function Page() {

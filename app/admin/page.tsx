@@ -1,5 +1,5 @@
 import AdminDashboard from "@/components/admin/AdminDashboard";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/supabaseClient";
 
 export default async function Page() {
   const supabase = createClient();
