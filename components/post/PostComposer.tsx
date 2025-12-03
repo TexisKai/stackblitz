@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import ImageUploader from "@/components/post/ImageUploader";
 
 export default function PostComposer({ onPosted }: { onPosted?: () => void }) {

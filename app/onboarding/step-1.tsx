@@ -1,11 +1,11 @@
 "use client";
 
 import { useOnboarding } from "@/hooks/useOnboarding";
-import { createBrowserSupabaseClient } from "@/lib/supabaseBrowser";
+import { createClient } from "@/lib/supabaseBrowser";
 import { useEffect, useState } from "react";
 
 export default function Step1() {
-  const supabase = createBrowserSupabaseClient();
+  const supabase = createClient();
   const { next } = useOnboarding(1);
   const [loading, setLoading] = useState(true);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import ProfileHeader from "./ProfileHeader";
 import BadgeDisplay from "./BadgeDisplay";
 import SkillsDisplay from "./SkillsDisplay";

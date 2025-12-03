@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import MessageComposer from "./MessageComposer";
 
 export default function ChatWindow({ otherUserId }: { otherUserId: string }) {

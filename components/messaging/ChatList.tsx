@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createBrowserSupabaseClient } from "@/lib/supabaseBrowser";
+import { createClient } from "@/lib/supabaseBrowser";
 
 export default function ChatList() {
-  const supabase = createBrowserSupabaseClient();
+  const supabase = createClient();
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

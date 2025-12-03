@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import CommunityCard from "@/components/common/CommunityCard";
 
 export default function RecommendedCommunitiesWidget() {

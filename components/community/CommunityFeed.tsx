@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import PostCard from "@/components/common/PostCard";
 
 export default function CommunityFeed({ communityId }: { communityId: string }) {

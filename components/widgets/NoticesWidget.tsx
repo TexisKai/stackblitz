@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import LoadingSkeleton, { CardSkeleton } from "../LoadingSkeleton";
-import { supabase } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 
 interface Notice {
   id: string;

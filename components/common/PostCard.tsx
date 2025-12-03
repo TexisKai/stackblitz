@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 import CommentSection from "@/components/post/CommentSection";
 
 export default function PostCard({ post }) {

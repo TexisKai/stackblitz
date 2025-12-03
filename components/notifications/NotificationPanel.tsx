@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import NotificationItem from "./NotificationItem";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabaseBrowser";
 
 export default function NotificationPanel() {
   const supabase = createClient();
