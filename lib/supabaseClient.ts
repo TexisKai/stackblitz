@@ -1,21 +1,28 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import type { Database } from './types'
 
-export function createClient(req, res) {
-  return createServerClient(
+export async function createServerSupabase() {
+  const cookieStore = await cookies()
+
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name) {
-          return req.cookies.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll()
         },
-        set(name, value, options) {
-          res.cookies.set(name, value, options);
-        },
-        remove(name, options) {
-          res.cookies.set(name, "", { ...options, maxAge: 0 });
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          } catch {
+            // Ignored in Server Components (middleware handles session refresh)
+          }
         },
       },
     }
-  );
+  )
 }

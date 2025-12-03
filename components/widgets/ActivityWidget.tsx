@@ -1,43 +1,50 @@
-"use client";
+import { createServerSupabase } from '@/lib/supabaseClient'
+import type { Database } from '@/lib/types'
 
-import { useEffect, useState } from "react";
-import LoadingSkeleton, { CardSkeleton } from "@/components/LoadingSkeleton";
-import { createClient } from "@/lib/supabaseBrowser";
-export default function ActivityWidget() {
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+type Activity = Database['public']['Tables']['activities']['Row']
 
-  useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-    const { data, error: supaError } = await supabasesupabase
-        .from("activities")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(5);
+export async function ActivityWidget() {
+  // 1. Init Server Client
+  const supabase = await createServerSupabase()
 
-      if (supaError) {
-        console.error("ActivityWidget Supabase Error:", supaError.message);
-      }
+  // 2. Fetch Data Directly (Server-side)
+  const { data: activities, error } = await supabase
+    .from('activities')
+    .select('id, created_at, description, user_id, type')
+    .order('created_at', { ascending: false })
+    .limit(5)
 
-      setActivities(data || []);
-      setLoading(false);
-    }
+  // 3. Handle Errors Gracefully
+  if (error) {
+    console.error('ActivityWidget Error:', error.message)
+    return <div className="p-4 text-red-500">Failed to load activities</div>
+  }
 
-    load();
-  }, []);
-
-  if (loading) return <CardSkeleton />;
-
+  // 4. Render
   return (
-    <div className="p-4 border rounded-xl bg-white shadow">
-      <h3 className="font-semibold mb-2">Recent Activity</h3>
-
-      {activities.map((a) => (
-        <div key={a.id} className="border-b py-2 text-sm">
-          {a.description}
+    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+      <div className="p-6 flex flex-col gap-4">
+        <h3 className="font-semibold leading-none tracking-tight">Recent Activity</h3>
+        
+        <div className="space-y-4">
+          {(activities as Activity[])?.map((activity) => (
+            <div key={activity.id} className="flex items-center gap-4 border-b pb-4 last:border-0 last:pb-0">
+              <div className="flex-1 space-y-1">
+                <p className="text-sm font-medium leading-none">
+                  {activity.description || 'New activity recorded'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {activity.created_at ? new Date(activity.created_at).toLocaleDateString() : ''}
+                </p>
+              </div>
+            </div>
+          ))}
+          
+          {(!activities || activities.length === 0) && (
+            <p className="text-sm text-muted-foreground">No recent activity found.</p>
+          )}
         </div>
-      ))}
+      </div>
     </div>
-  );
+  )
 }

@@ -1,86 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
-  });
+  })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          response.cookies.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          response.cookies.set({ name, value: '', ...options });
+        getAll() { return request.cookies.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+          })
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          })
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options)
+          })
         },
       },
     }
-  );
+  )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // =====================================================
-  // USER NOT LOGGED IN → BLOCK PROTECTED ROUTES
-  // =====================================================
-  if (!user) {
-    if (
-      request.nextUrl.pathname.startsWith('/dashboard') ||
-      request.nextUrl.pathname.startsWith('/onboarding')
-    ) {
-      console.log('No user found → redirect to /auth');
-      return NextResponse.redirect(new URL('/auth', request.url));
-    }
-
-    return response;
-  }
-
-  console.log('User authenticated:', user.email);
-
-  // =====================================================
-  // FETCH STUDENT DATA TO CHECK ONBOARDING STATUS
-  // =====================================================
-  const { data: student } = await supabase
-    .from('students')
-    .select('onboarding_complete')
-    .eq('auth_id', user.id)
-    .single();
-
-  // =====================================================
-  // USER IS LOGGED IN BUT HAS NOT ONBOARDED
-  // Trying to access dashboard → redirect to onboarding
-  // =====================================================
-  if (
-    request.nextUrl.pathname.startsWith('/dashboard') &&
-    !student?.onboarding_complete
-  ) {
-    console.log('User not onboarded → redirect to /onboarding');
-    return NextResponse.redirect(new URL('/onboarding', request.url));
-  }
-
-  // =====================================================
-  // USER HAS COMPLETED ONBOARDING
-  // Trying to access onboarding → redirect to dashboard
-  // =====================================================
-  if (
-    request.nextUrl.pathname.startsWith('/onboarding') &&
-    student?.onboarding_complete
-  ) {
-    console.log('User already onboarded → redirect to /dashboard');
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  return response;
+  await supabase.auth.getUser()
+  return response
 }
 
 export const config = {
-  matcher: ['/auth/:path*', '/onboarding/:path*', '/dashboard/:path*', '/api/:path*'],
-};
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+}
