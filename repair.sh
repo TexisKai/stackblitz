@@ -1,3 +1,4 @@
+23
 #!/bin/bash
 
 # Code Repair Automation Script
@@ -17,7 +18,7 @@ NC='\033[0m' # No Color
 REPAIR_PROMPT_FILE="repair-prompt.txt"
 TEMP_DIR=".repair-temp"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-OUTPUT_DIR="${3:-.repair-output}"
+OUTPUT_DIR="${2:-.repair-output}"
 
 # Functions
 print_header() {
