@@ -14,7 +14,7 @@ export default function CommunityFeed({ communityId }: { communityId: string }) 
 
     const { data, error } = await supabase
       .from("posts")
-      .select(\`
+      .select(`
         id,
         content,
         image_url,
@@ -22,7 +22,7 @@ export default function CommunityFeed({ communityId }: { communityId: string }) 
         author:profiles(id, display_name, avatar_url),
         likes:post_likes(count),
         comments:post_comments(count)
-      \`)
+      `)
       .eq("community_id", communityId)
       .order("created_at", { ascending: false });
 
@@ -32,7 +32,7 @@ export default function CommunityFeed({ communityId }: { communityId: string }) 
       return;
     }
 
-    const formatted = (data || []).map((p) => ({
+    const formatted = (data || []).map((p: any) => ({
       ...p,
       likes_count: p.likes?.[0]?.count || 0,
       comments_count: p.comments?.[0]?.count || 0,

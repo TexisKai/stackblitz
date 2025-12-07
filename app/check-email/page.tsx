@@ -1,8 +1,7 @@
-export default function CheckEmailPage() {
+export default function CheckEmail() {
   return (
-    <div className="max-w-md mx-auto p-4 text-center">
-      <h1 className="text-xl font-semibold">Check your email</h1>
-      <p>We have sent a magic login link to your email</p>
+    <div className="h-screen flex items-center justify-center">
+      <h1>We sent a magic link to your email.</h1>
     </div>
   );
 }

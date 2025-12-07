@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 import TeamCard from "@/components/teams/TeamCard";
 import TeamCreateForm from "@/components/teams/TeamCreateForm";
 

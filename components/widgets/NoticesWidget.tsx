@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import LoadingSkeleton, { CardSkeleton } from "../LoadingSkeleton";
-import { createClient } from "@/lib/supabaseBrowser";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 
 interface Notice {
   id: string;

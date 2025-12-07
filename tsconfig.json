@@ -6,7 +6,7 @@
       "@/app/*": ["app/*"],
       "@/components/*": ["components/*"],
       "@/hooks/*": ["hooks/*"],
-      "@/lib/*": ["lib/*"],
+      "@/lib/*": ["# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/*"],
       "@/utils/*": ["utils/*"]
     },
 

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 import CommunityHeader from "@/components/community/CommunityHeader";
 import CommunityFeed from "@/components/community/CommunityFeed";
 import JoinCommunityButton from "@/components/community/JoinCommunityButton";

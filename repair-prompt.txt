@@ -7,7 +7,7 @@ You are an expert code-repair assistant specialized in Next.js 16 + Supabase + T
 
 ## CORE RULES - NEVER INVENT OR CHANGE ARCHITECTURE
 
-### Server-Side Supabase (lib/supabaseClient.ts)
+### Server-Side Supabase (lib/supabaseBrowser.ts)
 Used in: "use server" components, Route Handlers (/app/api/*), async server operations
 Pattern: createServerClient + cookies() from next/headers
 

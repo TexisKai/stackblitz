@@ -1,7 +1,7 @@
 "use client";
 
 import { useOnboarding } from "@/hooks/useOnboarding";
-import { supabase } from "@/lib/supabaseBrowser";
+import { supabase } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 import { useEffect, useState } from "react";
 
 export default function Step1() {

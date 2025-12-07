@@ -252,11 +252,11 @@ health_check() {
     local issues=0
     
     # Check for required files
-    if [ ! -f "lib/supabaseClient.ts" ]; then
-        print_error "Missing: lib/supabaseClient.ts"
+    if [ ! -f "lib/supabaseBrowser.ts" ]; then
+        print_error "Missing: lib/supabaseBrowser.ts"
         ((issues++))
     else
-        print_success "Found: lib/supabaseClient.ts"
+        print_success "Found: lib/supabaseBrowser.ts"
     fi
     
     if [ ! -f "lib/supabaseBrowser.ts" ]; then

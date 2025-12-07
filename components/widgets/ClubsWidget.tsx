@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import LoadingSkeleton, { CardSkeleton } from "@/components/LoadingSkeleton";
-import { createClient } from "@/lib/supabaseBrowser";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 
 export default function ClubsWidget() {
   const [clubs, setClubs] = useState<any[]>([]);

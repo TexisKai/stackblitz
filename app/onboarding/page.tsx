@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { useAuth } from "@/hooks/useAuth";
-import { useOnboarding } from "@/hooks/useOnboarding";
+import { supabase } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 
 import { ProgressBar } from "@/components/ProgressBar";
 
@@ -20,14 +19,16 @@ export default function OnboardingPage() {
 
   const { user, loading: authLoading } = useAuth();
   const [saving, setSaving] = useState(false);
-  // STEP from URL
-  const stepFromUrl = Number(searchParams.get("step")) || 1;
 
+  // Step control
+  const stepFromUrl = Number(searchParams.get("step")) || 1;
   const [step, setStep] = useState(stepFromUrl);
+
+  // Global error + success
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Onboarding form data
+  // Profile Data
   const [formData, setFormData] = useState({
     fullName: "",
     college: "",
@@ -39,16 +40,21 @@ export default function OnboardingPage() {
     duIdUrl: "",
   });
 
-  // Sync step to URL
+  // Lock step inside valid bounds
+  useEffect(() => {
+    if (step < 1) updateStep(1);
+    if (step > 5) updateStep(5);
+  }, [step]);
+
+  // Sync step with URL
   const updateStep = (s: number) => {
     setStep(s);
     router.replace(`/onboarding?step=${s}`);
   };
 
-  // ---------- RESTORE SAVED FORM DATA ----------
+  // Load autosaved form
   useEffect(() => {
     const saved = localStorage.getItem("onboarding_form");
-
     if (saved) {
       try {
         setFormData(JSON.parse(saved));
@@ -56,16 +62,21 @@ export default function OnboardingPage() {
     }
   }, []);
 
-  // ---------- AUTOSAVE ----------
+  // Autosave to localStorage
   useEffect(() => {
     localStorage.setItem("onboarding_form", JSON.stringify(formData));
   }, [formData]);
 
-  // ---------- VALIDATION RULES ----------
+  // Validation
   const validateStep = () => {
     switch (step) {
       case 1:
-        return formData.fullName && formData.college && formData.course && formData.year;
+        return (
+          formData.fullName &&
+          formData.college &&
+          formData.course &&
+          formData.year
+        );
       case 2:
         return !!formData.duIdUrl;
       case 3:
@@ -79,59 +90,72 @@ export default function OnboardingPage() {
     }
   };
 
-  const completeOnboarding = async (userId: string) => {
+  // Move forward safely
+  const nextStep = () => {
+    if (!validateStep()) {
+      setError("Please complete this step before continuing.");
+      return;
+    }
+    setError(null);
+    updateStep(step + 1);
+  };
+
+  const prevStep = () => {
+    setError(null);
+    updateStep(step - 1);
+  };
+
+  // Complete onboarding
+  const completeOnboarding = async () => {
     try {
       setSaving(true);
-      const response = await fetch('/api/onboarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, ...formData }),
-      });
-      
-      if (!response.ok) throw new Error('Failed to complete onboarding');
-      
-      return await response.json();
-    } catch (error) {
-      console.error('Onboarding error:', error);
-      throw error;
+      setError(null);
+
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) throw new Error("Not logged in.");
+
+      const { error: updateError } = await supabase
+        .from("students")
+        .update({
+          full_name: formData.fullName,
+          college: formData.college,
+          course: formData.course,
+          year: formData.year,
+          du_id_url: formData.duIdUrl,
+          interests: formData.interests,
+          skills: formData.skills,
+          teams: formData.teams,
+          onboarding_complete: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq("auth_id", currentUser.id);
+
+      if (updateError) throw updateError;
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setError("Failed to complete onboarding. Please try again.");
+      return false;
     } finally {
       setSaving(false);
     }
   };
 
-  const next = () => {
-    if (!validateStep()) {
-      setError("Please complete this step before continuing.");
-      return;
-    }
-
-    setError(null);
-    updateStep(step + 1);
-  };
-
-  const prev = () => {
-    setError(null);
-    updateStep(step - 1);
-  };
-
-  // ---------- SUBMIT ----------
+  // Submit
   const handleSubmit = async () => {
     if (!user) return;
 
-    try {
-      setError(null);
-      await completeOnboarding(user.id, formData);
+    const ok = await completeOnboarding();
+    if (!ok) return;
 
-      setSuccess(true);
-      localStorage.removeItem("onboarding_form");
+    setSuccess(true);
+    localStorage.removeItem("onboarding_form");
 
-      setTimeout(() => router.push("/dashboard"), 1200);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong.");
-    }
+    setTimeout(() => router.push("/dashboard"), 1000);
   };
 
-  // ---------- RENDER STEPS ----------
+  // Render steps
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -140,9 +164,11 @@ export default function OnboardingPage() {
         return (
           <Step2
             duIdUrl={formData.duIdUrl}
-            setDuIdUrl={(duIdUrl: string) => setFormData({ ...formData, duIdUrl })}
-            onNext={next}
-            onBack={prev}
+            setDuIdUrl={(duIdUrl: string) =>
+              setFormData({ ...formData, duIdUrl })
+            }
+            onBack={prevStep}
+            onNext={nextStep}
           />
         );
       case 3:
@@ -156,6 +182,7 @@ export default function OnboardingPage() {
     }
   };
 
+  // Loading state
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -164,27 +191,28 @@ export default function OnboardingPage() {
     );
   }
 
+  // No user → redirect
+  if (!user) {
+    router.push("/auth");
+    return null;
+  }
+
   return (
     <div className="py-10 px-4">
       <div className="max-w-2xl mx-auto">
 
-        {/* HEADER */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900">Complete Your Profile</h1>
           <p className="text-gray-600">Takes less than 2 minutes</p>
         </div>
 
-        {/* PROGRESS BAR */}
         <ProgressBar currentStep={step} totalSteps={5} />
 
-        {/* FORM CARD */}
         <div className="bg-white rounded-xl shadow-lg p-8 mt-6">
 
           {success && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-              <p className="text-green-800 font-medium">
-                ✓ Profile completed — Redirecting…
-              </p>
+              <p className="text-green-800 font-medium">✓ Profile completed — Redirecting…</p>
             </div>
           )}
 
@@ -196,10 +224,9 @@ export default function OnboardingPage() {
 
           {renderStep()}
 
-          {/* FOOTER BUTTONS */}
           <div className="flex justify-between items-center mt-10 pt-6 border-t">
             <button
-              onClick={prev}
+              onClick={prevStep}
               disabled={step === 1}
               className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg disabled:opacity-50"
             >
@@ -218,7 +245,7 @@ export default function OnboardingPage() {
               </button>
             ) : (
               <button
-                onClick={next}
+                onClick={nextStep}
                 className="px-6 py-3 bg-indigo-600 text-white rounded-lg"
               >
                 Next →

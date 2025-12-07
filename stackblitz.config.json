@@ -4,7 +4,7 @@
   "openFiles": [
     "README.md",
     "app/(auth)/login/page.tsx",
-    "lib/supabaseClient.ts"
+    "lib/supabaseBrowser.ts"
   ],
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "",

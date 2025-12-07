@@ -1,5 +1,5 @@
 import AdminDashboard from "@/components/admin/AdminDashboard";
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 
 export default async function Page() {
   const supabase = createClient();

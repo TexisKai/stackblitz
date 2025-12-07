@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { uploadIDDocument } from "@/lib/storage";
+import { uploadIDDocument } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/storage";
 
 interface Step2Props {
   duIdUrl: string;

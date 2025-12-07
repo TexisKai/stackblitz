@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabaseBrowser";
+import { createClient } from "@/# Phase 2: Create Authentication Pages - Signup mkdir -p app/auth/signup app/auth/login app/api/auth/create-profile/supabaseBrowser";
 import ImageUploader from "@/components/post/ImageUploader";
 
 export default function PostComposer({ onPosted }: { onPosted?: () => void }) {
